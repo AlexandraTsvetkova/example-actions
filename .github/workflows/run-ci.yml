@@ -27,7 +27,7 @@ jobs:
           sudo npm install -g @neuralegion/nexploit-cli --unsafe-perm=true
       - name: Save environment variables
         run: |
-          printf "NEXPLOIT_TOKEN=${{ secrets.NEXPLOIT_TOKEN }}\nREPEATER=${{ secrets.REPEATER }}\n" > .env
+          printf "NEXPLOIT_TOKEN=\nREPEATER=${{ secrets.REPEATER }}\n" > .env
           cat .env
       - name: Docker-Compose
         run: |
@@ -35,27 +35,41 @@ jobs:
           sudo docker-compose config
       - run: sleep 30s
       - run: sudo docker-compose logs
-      - name: Start Nexploit Scan 🏁
+      - name: Run a NeuraLegion Scan
         id: start
-        run: |
-          SCAN_ID=$(nexploit-cli scan:run                                                 \
-            --test csrf dom_xss header_security secret_tokens                             \
-            --name "💎 BrokenCrystals for a '${GITHUB_REF##*/}' branch #${GITHUB_RUN_NUMBER}" \
-            --crawler http://brokencrystals.local                                    \
-            --repeater ${{ secrets.REPEATER }}                                            \
-            --token ${{ secrets.NEXPLOIT_TOKEN }})
-          echo "SCAN_ID=$SCAN_ID" >> $GITHUB_ENV
+        # You may pin to the exact commit or the version.
+        # uses: NeuraLegion/run-scan@29ebd17b4fd6292ce7a238a59401668953b37fbe
+        uses: NeuraLegion/run-scan@v1
+        with:
+          # Api Token. You can generate it in Organization section
+          api_token: ${{ secrets.NEXPLOIT_TOKEN }}
+          # Array of discovery types. Can be: archive, crawler, oas
+          discovery_types: crawler
+          # Crawler URLs
+          crawler_urls: https://qa.brokencrystals.com
+          # Scan Name
+          name: Example Scan
       - name: Get the output scan url 🔗
         run: |
-          printf "Scan was started with ID https://nexploit.app/scans/$SCAN_ID"
-      - name: Wait for issues ⏳
-        run: |
-          nexploit-cli scan:polling               \
-            --interval 30s                        \
-            --timeout 4m                         \
-            --token ${{ secrets.NEXPLOIT_TOKEN }} \
-            --breakpoint high_issue $SCAN_ID
-      - name: Stop Scan 🛑
-        continue-on-error: true
-        if: ${{ always() }}
-        run: nexploit-cli scan:stop --token ${{ secrets.NEXPLOIT_TOKEN }} $SCAN_ID
+          printf "Scan was started with ID https://app.neuralegion.com/scans/$SCAN_ID"
+      - name: NeuraLegion Wait for Issues
+        # You may pin to the exact commit or the version.
+        # uses: NeuraLegion/wait-for@dd647d1032d1faf8b3104d10490e7e97e3a029de
+        uses: NeuraLegion/wait-for@v1
+        with:
+          # Api Token. You can generate it in Organization section
+          api_token: ${{ secrets.NEXPLOIT_TOKEN }}
+          # Scan ID to wait for
+          scan: ${{ steps.start.outputs.id }}
+          wait_for: any
+          # Time in seconds for the action to wait for issues
+          timeout: 600
+      - name: NeuraLegion Stop Scan
+        # You may pin to the exact commit or the version.
+        # uses: NeuraLegion/stop-scan@055d66866ebdccc8035fbb44bdbbb3e4f37e0364
+        uses: NeuraLegion/stop-scan@v1
+        with:
+          # Api Token. You can generate it in Organization section
+          api_token: ${{ secrets.NEXPLOIT_TOKEN }}
+          # Scan ID to wait for
+          scan: ${{ steps.start.outputs.id }}
