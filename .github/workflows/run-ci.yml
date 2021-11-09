@@ -44,14 +44,14 @@ jobs:
           # Api Token. You can generate it in Organization section
           api_token: ${{ secrets.NEXPLOIT_TOKEN }}
           # Array of discovery types. Can be: archive, crawler, oas
-          discovery_types: crawler
+          discovery_types: ["crawler"]
           # Crawler URLs
-          crawler_urls: https://qa.brokencrystals.com
+          crawler_urls: ["https://qa.brokencrystals.com"]
           # Scan Name
           name: Example Scan
       - name: Get the output scan url 🔗
         run: |
-          printf "Scan was started with ID https://app.neuralegion.com/scans/$SCAN_ID"
+          printf "Scan was started with ID https://app.neuralegion.com/scans/${{ steps.start.outputs.id }}"
       - name: NeuraLegion Wait for Issues
         # You may pin to the exact commit or the version.
         # uses: NeuraLegion/wait-for@dd647d1032d1faf8b3104d10490e7e97e3a029de
