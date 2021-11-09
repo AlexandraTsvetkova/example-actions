@@ -44,9 +44,11 @@ jobs:
           # Api Token. You can generate it in Organization section
           api_token: ${{ secrets.NEXPLOIT_TOKEN }}
           # Array of discovery types. Can be: archive, crawler, oas
-          discovery_types: ["crawler"]
+          discovery_types: |
+            ["crawler"]
           # Crawler URLs
-          crawler_urls: ["https://qa.brokencrystals.com"]
+          crawler_urls: |
+            ["https://qa.brokencrystals.com"]
           # Scan Name
           name: Example Scan
       - name: Get the output scan url 🔗
