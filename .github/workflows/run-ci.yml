@@ -39,7 +39,7 @@ jobs:
         id: start
         # You may pin to the exact commit or the version.
         # uses: NeuraLegion/run-scan@29ebd17b4fd6292ce7a238a59401668953b37fbe
-        uses: NeuraLegion/run-scan@v1
+        uses: NeuraLegion/run-scan@release
         with:
           # Api Token. You can generate it in Organization section
           api_token: ${{ secrets.NEXPLOIT_TOKEN }}
@@ -57,7 +57,7 @@ jobs:
       - name: NeuraLegion Wait for Issues
         # You may pin to the exact commit or the version.
         # uses: NeuraLegion/wait-for@dd647d1032d1faf8b3104d10490e7e97e3a029de
-        uses: NeuraLegion/wait-for@v1
+        uses: NeuraLegion/wait-for@release
         with:
           # Api Token. You can generate it in Organization section
           api_token: ${{ secrets.NEXPLOIT_TOKEN }}
@@ -69,7 +69,7 @@ jobs:
       - name: NeuraLegion Stop Scan
         # You may pin to the exact commit or the version.
         # uses: NeuraLegion/stop-scan@055d66866ebdccc8035fbb44bdbbb3e4f37e0364
-        uses: NeuraLegion/stop-scan@v1
+        uses: NeuraLegion/stop-scan@release
         with:
           # Api Token. You can generate it in Organization section
           api_token: ${{ secrets.NEXPLOIT_TOKEN }}
